@@ -1,0 +1,109 @@
+import logging
+
+from fastapi import status
+from fastapi.responses import ORJSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING, Optional
+
+from src.core.settings import settings
+from src.tools.exceptions import CustomException
+from .repository import LibraryRepository
+from .exceptions import Errors
+from .schemas import BorrowedBookCreate
+from ..books.schemas import BookUpdatePartial
+from ..books.service import BookService
+
+if TYPE_CHECKING:
+    from src.core.models import (
+        Reader,
+        Book,
+        BorrowedBook,
+    )
+
+CLASS = "Library"
+_CLASS = "library"
+
+
+class LibraryService:
+    def __init__(
+            self,
+            session: AsyncSession,
+    ):
+        self.session = session
+        self.logger = logging.getLogger(__name__)
+
+    async def borrow_one(
+            self,
+            book: "Book",
+            reader: "Reader"
+    ):
+        if isinstance(book, ORJSONResponse):
+            return book
+        if isinstance(reader, ORJSONResponse):
+            return reader
+
+        if book.quantity < 1:
+            return ORJSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": Errors.NOT_ENOUGH_QUANTITY(),
+                }
+            )
+        if len(reader.borrowed_books) >= settings.reader.READERS_MAX_ITEMS_AT_ONCE:
+            return ORJSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": Errors.LIMIT_REACHED()
+                }
+            )
+
+        reader_books = [book.book_id for book in reader.borrowed_books]
+        if book.id in reader_books:
+            return ORJSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": Errors.SIMILAR_EXISTS()
+                }
+            )
+
+        instance: BorrowedBookCreate = BorrowedBookCreate(
+            book_id=book.id,
+            reader_id=reader.id,
+        )
+
+        book_instance: BookUpdatePartial = BookUpdatePartial(
+            quantity=book.quantity - 1
+        )
+
+        repository: LibraryRepository = LibraryRepository(
+            session=self.session
+        )
+        try:
+            result = await repository.create_one(
+                instance=instance
+            )
+        except CustomException as exc:
+            return ORJSONResponse(
+                status_code=exc.status_code,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": exc.msg,
+                }
+            )
+
+        if result:
+            book_service: BookService = BookService(
+                session=self.session
+            )
+            edition_result = await book_service.edit_one(
+                orm_model=book,
+                instance=book_instance,
+                is_partial=True,
+            )
+            if isinstance(edition_result, ORJSONResponse):
+                return edition_result
+        return result
+
