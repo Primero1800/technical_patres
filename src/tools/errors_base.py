@@ -15,6 +15,10 @@ class ErrorsBase:
         return f"{cls.CLASS} doesn't exist"
 
     @classmethod
+    def NOT_EXISTS_ID(cls, id: int):
+        return "%s with id=%s not exists" % (cls.CLASS, id)
+
+    @classmethod
     def ALREADY_EXISTS(cls):
         return f"{cls.CLASS} already exists"
 

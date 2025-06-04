@@ -54,7 +54,7 @@ class BookRepository:
         orm_model = await self.session.get(Book, id)
         if not orm_model:
             raise CustomException(
-                msg=Errors.not_exists_id(id)
+                msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
 
@@ -71,7 +71,7 @@ class BookRepository:
 
         if not orm_model:
             raise CustomException(
-                msg=Errors.not_exists_id(id)
+                msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
 
