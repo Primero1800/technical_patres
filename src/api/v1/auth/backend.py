@@ -2,7 +2,7 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import BearerTransport, JWTStrategy, AuthenticationBackend
 from sqlalchemy import Integer
 
-
+from src.api.v1.auth.dependencies import get_user_manager
 from src.core.settings import settings
 
 
