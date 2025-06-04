@@ -48,6 +48,21 @@ class Auth(CustomSettings):
     # AUTH_VERIFICATION_TOKEN_LIFETIME_SECONDS: int
     # AUTH_RESET_PASSWORD_TOKEN_LIFETIME_SECONDS: int
 
+    def get_url(self, purpose: str, version: str = "v1"):
+        PURPOSE = ''
+        SECOND_PARAM = "unversioned"
+
+        if version == "v1":
+            SECOND_PARAM = settings.app.API_V1_PREFIX
+        if purpose == "transport-token":
+            PURPOSE = "login"
+        return "{}{}{}/{}".format(
+            settings.app.API_PREFIX,
+            SECOND_PARAM,
+            settings.tags.AUTH_PREFIX,
+            PURPOSE,
+        )
+
 
 class DB(CustomSettings):
 
