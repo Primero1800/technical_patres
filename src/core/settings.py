@@ -115,6 +115,9 @@ class Tags(CustomSettings):
     BOOKS_PREFIX: str
     BOOKS_TAG: str
 
+    READERS_PREFIX: str
+    READERS_TAG: str
+
 
 class Users(CustomSettings):
     USERS_PASSWORD_MIN_LENGTH: int
