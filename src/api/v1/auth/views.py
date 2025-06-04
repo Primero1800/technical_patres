@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.v1.auth.backend import (
     auth_backend,
 )
-from src.api.v1.auth.dependencies import get_user_manager
+from src.api.v1.auth.user_manager import get_user_manager
 from src.core.config import DBConfigurer
 from .service import AuthService
 from .schemas import (

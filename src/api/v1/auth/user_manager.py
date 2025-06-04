@@ -1,9 +1,12 @@
 import logging
+
+from fastapi import Depends
 from typing import Optional, Union, TYPE_CHECKING
 
 from fastapi_users import BaseUserManager, IntegerIDMixin, schemas, models, InvalidPasswordException
 from sqlalchemy import Integer
 
+from src.core.auth.users_db import get_user_db
 from src.core.settings import settings
 
 if TYPE_CHECKING:
@@ -47,4 +50,8 @@ class UserManager(IntegerIDMixin, BaseUserManager["User", Integer]):
             raise InvalidPasswordException(
                 reason="Password should not contain e-mail"
             )
+
+
+async def get_user_manager(user_db=Depends(get_user_db)):
+    yield UserManager(user_db)
 

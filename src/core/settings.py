@@ -113,6 +113,10 @@ class Tags(CustomSettings):
     AUTH_TAG: str
 
 
+class Users(CustomSettings):
+    USERS_PASSWORD_MIN_LENGTH: int
+
+
 class Settings(CustomSettings):
     app: AppSettings = AppSettings()
     logging: LoggingConfig = LoggingConfig()
@@ -120,6 +124,7 @@ class Settings(CustomSettings):
     tags: Tags = Tags()
     db: DB = DB()
     auth: Auth = Auth()
+    users: Users = Users()
 
 
 settings = Settings()
