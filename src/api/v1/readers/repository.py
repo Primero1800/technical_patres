@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING, Union, Optional
 from sqlalchemy import select, Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, with_loader_criteria
 
-from src.core.models import Reader
+from src.core.models import Reader, BorrowedBook
 from src.tools.exceptions import CustomException
 from .exceptions import Errors
 
@@ -61,11 +61,20 @@ class ReaderRepository:
     async def get_one_complex(
             self,
             id: int = None,
+            actual: bool = False,
     ):
         stmt = select(Reader).where(Reader.id == id)
-        stmt = stmt.options(
-            joinedload(Reader.borrowed_books)
-        )
+        if actual:
+            stmt = stmt.options(
+                joinedload(Reader.borrowed_books).
+                joinedload(BorrowedBook.book),
+                with_loader_criteria(BorrowedBook, BorrowedBook.return_date == None)
+            )
+        else:
+            stmt = stmt.options(
+                joinedload(Reader.borrowed_books).
+                joinedload(BorrowedBook.book)
+            )
         result: Result = await self.session.execute(stmt)
         orm_model: Reader | None = result.unique().scalar_one_or_none()
 
