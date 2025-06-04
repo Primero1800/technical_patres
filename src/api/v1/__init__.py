@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from .auth import router as auth_router
 from .books import router as books_router
+from .readers import router as readers_router
 
 from src.core.settings import settings
 
@@ -18,6 +19,12 @@ router.include_router(
     books_router,
     prefix=settings.tags.BOOKS_PREFIX,
     tags=[settings.tags.BOOKS_TAG]
+)
+
+router.include_router(
+    readers_router,
+    prefix=settings.tags.READERS_PREFIX,
+    tags=[settings.tags.READERS_TAG]
 )
 
 #
