@@ -112,6 +112,9 @@ class Tags(CustomSettings):
     AUTH_PREFIX: str
     AUTH_TAG: str
 
+    BOOKS_PREFIX: str
+    BOOKS_TAG: str
+
 
 class Users(CustomSettings):
     USERS_PASSWORD_MIN_LENGTH: int
