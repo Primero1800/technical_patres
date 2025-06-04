@@ -118,6 +118,9 @@ class Tags(CustomSettings):
     READERS_PREFIX: str
     READERS_TAG: str
 
+    LIBRARY_PREFIX: str
+    LIBRARY_TAG: str
+
 
 class Users(CustomSettings):
     USERS_PASSWORD_MIN_LENGTH: int
