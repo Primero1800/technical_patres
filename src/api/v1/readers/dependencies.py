@@ -17,3 +17,13 @@ async def get_one(
         session=session
     )
     return await service.get_one(id=id)
+
+
+async def get_one_complex(
+    id: int,
+    session: AsyncSession = Depends(DBConfigurer.session_getter)
+) -> "Reader":
+    service: ReaderService = ReaderService(
+        session=session
+    )
+    return await service.get_one_complex(id=id)
