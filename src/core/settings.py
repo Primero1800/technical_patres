@@ -104,6 +104,10 @@ class RunConfig(CustomSettings):
     app_src: AppRunConfig = AppRunConfig()
 
 
+class Reader(CustomSettings):
+    READERS_MAX_ITEMS_AT_ONCE: int =3
+
+
 class Tags(CustomSettings):
     TECH_TAG: str
     ROOT_TAG: str
@@ -134,6 +138,7 @@ class Settings(CustomSettings):
     db: DB = DB()
     auth: Auth = Auth()
     users: Users = Users()
+    reader: Reader = Reader()
 
 
 settings = Settings()
