@@ -93,7 +93,7 @@ class ReaderRepository:
             self.session.add(orm_model)
             await self.session.commit()
             await self.session.refresh(orm_model)
-            self.logger.info("%s %r was successfully created" % (CLASS, orm_model))
+            self.logger.info("%r was successfully created" % orm_model)
             return orm_model
         except IntegrityError as error:
             self.logger.error(f"Error while orm_model creating", exc_info=error)
@@ -131,7 +131,7 @@ class ReaderRepository:
         try:
             await self.session.commit()
             await self.session.refresh(orm_model)
-            self.logger.info("%r %r was successfully edited" % (CLASS, orm_model))
+            self.logger.info("%r was successfully edited" % orm_model)
             return orm_model
         except IntegrityError as exc:
             self.logger.error("Error occurred while editing data in database", exc_info=exc)
