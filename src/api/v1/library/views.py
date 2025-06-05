@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from fastapi import APIRouter, status, Depends, Query
+from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import DBConfigurer
@@ -12,8 +12,6 @@ from .schemas import (
     BorrowedBookExtended,
 )
 from . import dependencies as deps
-from ..books.dependencies import get_one as get_one_book
-from ..readers.dependencies import get_one_complex_actual
 from ..auth.dependencies import current_user
 
 if TYPE_CHECKING:
@@ -35,8 +33,8 @@ router = APIRouter()
     description="Borrow one item (for librarians only)"
 )
 async def borrow_one(
-        book: "Book" = Depends(get_one_book),
-        reader: "Reader" = Depends(get_one_complex_actual),
+        book: "Book" = Depends(deps.get_book),
+        reader: "Reader" = Depends(deps.get_reader_complex_actual),
         session: AsyncSession = Depends(DBConfigurer.session_getter)
 ):
 
@@ -48,3 +46,22 @@ async def borrow_one(
         reader=reader,
     )
 
+
+@router.post(
+    "/return",
+    dependencies=[Depends(current_user),],
+    status_code=status.HTTP_201_CREATED,
+    response_model=BorrowedBookRead,
+    description="Turn one item back (for librarians only)"
+)
+async def return_one(
+        borrowed_book: "BorrowedBook" = Depends(deps.get_one),
+        session: AsyncSession = Depends(DBConfigurer.session_getter)
+):
+
+    service: LibraryService = LibraryService(
+        session=session
+    )
+    return await service.return_one(
+        orm_model=borrowed_book,
+    )

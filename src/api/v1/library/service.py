@@ -1,5 +1,6 @@
 import logging
 
+from datetime import datetime
 from fastapi import status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,6 +33,24 @@ class LibraryService:
         self.session = session
         self.logger = logging.getLogger(__name__)
 
+    async def get_one(
+            self,
+            id: int
+    ):
+        repository: LibraryRepository = LibraryRepository(
+            session=self.session
+        )
+        try:
+            return await repository.get_one(id=id)
+        except CustomException as exc:
+            return ORJSONResponse(
+                status_code=exc.status_code,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": exc.msg,
+                }
+            )
+
     async def borrow_one(
             self,
             book: "Book",
@@ -62,7 +81,7 @@ class LibraryService:
         reader_books = [book.book_id for book in reader.borrowed_books]
         if book.id in reader_books:
             return ORJSONResponse(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 content={
                     "message": Errors.HANDLER_MESSAGE(),
                     "detail": Errors.SIMILAR_EXISTS()
@@ -107,3 +126,59 @@ class LibraryService:
                 return edition_result
         return result
 
+    async def return_one(
+            self,
+            orm_model: "BorrowedBook"
+    ):
+        if isinstance(orm_model, ORJSONResponse):
+            return orm_model
+
+        if orm_model.return_date is not None:
+            return ORJSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": Errors.INVALID_OPERATION(),
+                }
+            )
+        repository: LibraryRepository = LibraryRepository(
+            session=self.session
+        )
+        orm_model.return_date = datetime.now()
+        try:
+            result = await repository.save(orm_model)
+        except CustomException as exc:
+            return ORJSONResponse(
+                status_code=exc.status_code,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": exc.msg,
+                }
+            )
+        if result:
+            book_service: BookService = BookService(
+                session=self.session
+            )
+            try:
+                book = await book_service.get_one(
+                    id=result.book_id
+                )
+            except CustomException as exc:
+                return ORJSONResponse(
+                    status_code=exc.status_code,
+                    content={
+                        "message": Errors.HANDLER_MESSAGE(),
+                        "detail": exc.msg,
+                    }
+                )
+            book_instance: BookUpdatePartial = BookUpdatePartial(
+                quantity=book.quantity + 1
+            )
+            edition_result = await book_service.edit_one(
+                orm_model=book,
+                instance=book_instance,
+                is_partial=True,
+            )
+            if isinstance(edition_result, ORJSONResponse):
+                return edition_result
+        return result
