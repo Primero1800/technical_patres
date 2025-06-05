@@ -58,7 +58,7 @@ class ReaderRepository:
             )
         return orm_model
 
-    async def get_one_complex(
+    async def get_one_full(
             self,
             id: int = None,
             actual: bool = False,
@@ -74,6 +74,30 @@ class ReaderRepository:
             stmt = stmt.options(
                 joinedload(Reader.borrowed_books).
                 joinedload(BorrowedBook.book)
+            )
+        result: Result = await self.session.execute(stmt)
+        orm_model: Reader | None = result.unique().scalar_one_or_none()
+
+        if not orm_model:
+            raise CustomException(
+                msg=Errors.NOT_EXISTS_ID(id)
+            )
+        return orm_model
+
+    async def get_one_complex(
+            self,
+            id: int = None,
+            actual: bool = False,
+    ):
+        stmt = select(Reader).where(Reader.id == id)
+        if actual:
+            stmt = stmt.options(
+                joinedload(Reader.borrowed_books),
+                with_loader_criteria(BorrowedBook, BorrowedBook.return_date == None)
+            )
+        else:
+            stmt = stmt.options(
+                joinedload(Reader.borrowed_books)
             )
         result: Result = await self.session.execute(stmt)
         orm_model: Reader | None = result.unique().scalar_one_or_none()
