@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.tools.exceptions import CustomException
 from .repository import ReaderRepository
 from .exceptions import Errors
+from .serializer import serialize
 from .schemas import (
     ReaderCreate,
     ReaderUpdate,
@@ -51,10 +52,11 @@ class ReaderService:
         repository: ReaderRepository = ReaderRepository(
             session=self.session
         )
-        return await repository.get_all_full(
+        result = await repository.get_all_full(
             page=page,
             size=size,
         )
+        return [await serialize(model=item) for item in result]
 
     async def get_one(
             self,
@@ -76,13 +78,17 @@ class ReaderService:
 
     async def get_one_complex(
             self,
-            id: int
+            id: int,
+            actual: bool = False,
     ):
         repository: ReaderRepository = ReaderRepository(
             session=self.session
         )
         try:
-            return await repository.get_one_complex(id=id)
+            result = await repository.get_one_complex(
+                id=id,
+                actual=actual,
+            )
         except CustomException as exc:
             return ORJSONResponse(
                 status_code=exc.status_code,
@@ -91,6 +97,7 @@ class ReaderService:
                     "detail": exc.msg,
                 }
             )
+        return await serialize(model=result)
 
     async def create_one(
             self,
