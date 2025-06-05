@@ -37,3 +37,13 @@ async def get_one_complex_actual(
         session=session
     )
     return await service.get_one_complex(id=id, actual=True)
+
+
+async def get_one_full_actual(
+    id: int,
+    session: AsyncSession = Depends(DBConfigurer.session_getter)
+) -> "Reader":
+    service: ReaderService = ReaderService(
+        session=session
+    )
+    return await service.get_one_full(id=id, actual=True)
