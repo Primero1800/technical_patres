@@ -1,15 +1,12 @@
 import logging
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from fastapi.responses import ORJSONResponse
 from fastapi_users import BaseUserManager, models, exceptions
 from fastapi import Request, status
 from fastapi_users.authentication import Strategy, AuthenticationBackend
-from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from .exceptions import Errors
-
-
 
 
 class AuthService:
@@ -51,14 +48,6 @@ class AuthService:
         response = await self.backend.login(strategy, user)
         await self.user_manager.on_after_login(user, request, response)
         return response
-
-    async def logout(
-            self,
-            token: tuple[models.UP, str],
-            strategy: Strategy[models.UP, models.ID],
-    ):
-        user, token = token
-        return await self.backend.logout(strategy, user, token)
 
     async def register(
             self,

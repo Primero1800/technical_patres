@@ -51,23 +51,6 @@ async def login(
     )
 
 
-# @router.post(
-#     "/logout",
-#     name=f"auth:{auth_backend.name}.logout",
-# )
-# async def logout(
-#         user_token: tuple[models.UP, str] = Depends(current_user_token),
-#         strategy: Strategy[models.UP, models.ID] = Depends(auth_backend.get_strategy),
-# ):
-#     service: AuthService = AuthService(
-#         backend=auth_backend,
-#     )
-#     return await service.logout(
-#         token=user_token,
-#         strategy=strategy,
-#     )
-
-
 @router.post(
         "/register",
         response_model=UserRead,
