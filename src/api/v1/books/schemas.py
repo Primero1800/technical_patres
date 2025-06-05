@@ -36,6 +36,10 @@ class BookShort(BaseBook):
     pass
 
 
+class BookLibList(BookShort):
+    id: int
+
+
 class BookRead(BookShort):
     id: int
     quantity: base_quantity_field

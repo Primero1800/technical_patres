@@ -8,11 +8,10 @@ from src.core.config import DBConfigurer
 from .service import LibraryService
 from .schemas import (
     BorrowedBookRead,
-    BorrowedBookCreate,
-    BorrowedBookExtended,
 )
 from . import dependencies as deps
 from ..auth.dependencies import current_user
+from ..books.schemas import BookLibList
 
 if TYPE_CHECKING:
     from src.core.models import (
@@ -50,7 +49,7 @@ async def borrow_one(
 @router.post(
     "/return",
     dependencies=[Depends(current_user),],
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
     response_model=BorrowedBookRead,
     description="Turn one item back (for librarians only)"
 )
@@ -58,10 +57,28 @@ async def return_one(
         borrowed_book: "BorrowedBook" = Depends(deps.get_one),
         session: AsyncSession = Depends(DBConfigurer.session_getter)
 ):
-
     service: LibraryService = LibraryService(
         session=session
     )
     return await service.return_one(
         orm_model=borrowed_book,
+    )
+
+
+@router.get(
+    "/info/{reader_id}",
+    dependencies=[Depends(current_user),],
+    status_code=status.HTTP_200_OK,
+    response_model=list[BookLibList],
+    description="The list of all actual items by user_id (for librarians only)"
+)
+async def info(
+    reader: "Reader" = Depends(deps.get_reader_full_actual),
+    session: AsyncSession = Depends(DBConfigurer.session_getter)
+):
+    service: LibraryService = LibraryService(
+        session=session
+    )
+    return await service.get_actual_info(
+        reader=reader
     )
