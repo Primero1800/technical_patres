@@ -30,7 +30,66 @@ router = APIRouter()
         dependencies=[Depends(current_user)],
         response_model=list[ReaderRead],
         status_code=status.HTTP_200_OK,
-        description="Get the list of the all items (for librarians only)"
+        description="Get the list of the all items (for librarians only)",
+        responses={
+            200: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "A list of readers",
+                                "value": [
+                                    {
+                                        "id": 1,
+                                        "name": "Angelina",
+                                        "email": "angel@mail.ru",
+                                    },
+                                    {
+                                        "id": 75,
+                                        "name": "Alexey",
+                                        "email": "a234@gmail.com",
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            401: {
+                "description": "Unauthorized",
+                "content": {
+                    "text/plain": {
+                        "examples": {
+                            "not authenticated": {
+                                "summary": "User is not authenticated",
+                                "value": "Unauthorized"
+                            }
+                        }
+                    }
+                }
+            },
+            422: {
+                "description": "Validation Error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "invalid input": {
+                                "summary": "Invalid input data",
+                                "value": {
+                                    "detail": [
+                                        {
+                                            "loc": ["query", "page"],
+                                            "msg": "Input should be greater than 0",
+                                            "type": "greater_than"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
 )
 async def get_all(
         page: int = Query(1, gt=0, description="Result list page number, greater than 0"),
@@ -52,7 +111,98 @@ async def get_all(
         dependencies=[Depends(current_user)],
         response_model=list[ReaderExtended],
         status_code=status.HTTP_200_OK,
-        description="Get the list of the all items (for librarians only)"
+        description="Get the list of the all items (for librarians only)",
+        responses={
+            200: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "A list of readers",
+                                "value": [
+                                    {
+                                        "id": 1,
+                                        "name": "Angelina",
+                                        "email": "angel@mail.ru",
+                                        "borrowed_books": [
+                                            {
+                                                "id": 1,
+                                                "book_id": 18,
+                                                "reader_id": 1,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": None
+                                            },
+                                            {
+                                                "id": 21,
+                                                "book_id": 12,
+                                                "reader_id": 1,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": "2022-09-04T17:28:17.170342"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "id": 75,
+                                        "name": "Alexey",
+                                        "email": "a234@gmail.com",
+                                        "borrowed_books": [
+                                            {
+                                                "id": 1,
+                                                "book_id": 7,
+                                                "reader_id": 75,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": None
+                                            },
+                                            {
+                                                "id": 21,
+                                                "book_id": 120,
+                                                "reader_id": 75,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": "2022-09-04T17:28:17.170342"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            401: {
+                "description": "Unauthorized",
+                "content": {
+                    "text/plain": {
+                        "examples": {
+                            "not authenticated": {
+                                "summary": "User is not authenticated",
+                                "value": "Unauthorized"
+                            }
+                        }
+                    }
+                }
+            },
+            422: {
+                "description": "Validation Error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "invalid input": {
+                                "summary": "Invalid input data",
+                                "value": {
+                                    "detail": [
+                                        {
+                                            "loc": ["query", "page"],
+                                            "msg": "Input should be greater than 0",
+                                            "type": "greater_than"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
 )
 async def get_all(
         page: int = Query(1, gt=0, description="Result list page number, greater than 0"),
@@ -74,7 +224,47 @@ async def get_all(
     dependencies=[Depends(current_user), ],
     status_code=status.HTTP_200_OK,
     response_model=ReaderRead,
-    description="Get the item by id (for librarians only)"
+    description="Get the item by id (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One simple reader",
+                            "value": {
+                                "id": 1,
+                                "name": "Angelina",
+                                "email": "angel@mail.ru",
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Reader not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Readers exception handler",
+                        "detail": "Reader with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_one(
         id: int,
@@ -94,7 +284,56 @@ async def get_one(
     dependencies=[Depends(current_user), ],
     status_code=status.HTTP_200_OK,
     response_model=ReaderExtended,
-    description="Get the item by id with all relations (for librarians only)"
+    description="Get the item by id with all relations (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One complex reader",
+                            "value": {
+                                "id": 1,
+                                "name": "Angelina",
+                                "email": "angel@mail.ru",
+                                "borrowed_books": [
+                                    {
+                                        "id": 1,
+                                        "book_id": 18,
+                                        "reader_id": 1,
+                                        "borrow_date": "2022-06-04T17:28:17.170342",
+                                        "return_date": None
+                                    },
+                                ]
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Reader not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Readers exception handler",
+                        "detail": "Reader with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_one_complex(
         id: int,
@@ -114,7 +353,56 @@ async def get_one_complex(
     dependencies=[Depends(current_user), ],
     status_code=status.HTTP_200_OK,
     response_model=ReaderExtended,
-    description="Get the item by id with all relations (for librarians only)"
+    description="Get the item by id with all relations (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One complex reader",
+                            "value": {
+                                "id": 1,
+                                "name": "Angelina",
+                                "email": "angel@mail.ru",
+                                "borrowed_books": [
+                                    {
+                                        "id": 1,
+                                        "book_id": 18,
+                                        "reader_id": 1,
+                                        "borrow_date": "2022-06-04T17:28:17.170342",
+                                        "return_date": None
+                                    },
+                                ]
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Reader not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Readers exception handler",
+                        "detail": "Reader with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_one_complex_actual(
         id: int,
@@ -135,7 +423,50 @@ async def get_one_complex_actual(
     dependencies=[Depends(current_user),],
     status_code=status.HTTP_201_CREATED,
     response_model=ReaderRead,
-    description="Create one item (for librarians only)"
+    description="Create one item (for librarians only)",
+    responses={
+        201: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One reader created",
+                            "value": {
+                                "id": 1,
+                                "name": "Angelina",
+                                "email": "angel@mail.ru",
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database insertion error",
+                        "value": {
+                            "message": "Handled by Readers exception handler",
+                            "detail": "Reader already exists"
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+    }
 )
 async def create_one(
         instance: ReaderCreate,
@@ -155,7 +486,49 @@ async def create_one(
     "/{id}",
     dependencies=[Depends(current_user), ],
     status_code=status.HTTP_204_NO_CONTENT,
-    description="Delete one item by id (for librarians only)"
+    description="Delete one item by id (for librarians only)",
+    responses={
+        204: {
+            "description": "Reader was deleted",
+            "content": "No content"
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database deleting error",
+                        "value": {
+                            "message": "Handled by Readers exception handler",
+                            "detail": "Error occurred while changing database data"
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Reader not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Readers exception handler",
+                        "detail": "Reader with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def delete_one(
         orm_model: "Reader" = Depends(deps.get_one),
@@ -173,7 +546,61 @@ async def delete_one(
     dependencies=[Depends(current_user),],
     status_code=status.HTTP_200_OK,
     response_model=ReaderRead,
-    description="Edit one item (for librarians only)"
+    description="Edit one item (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One reader edited",
+                            "value": {
+                                "id": 1,
+                                "name": "Angelina",
+                                "email": "angel@mail.ru",
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database deleting error",
+                        "value": {
+                            "message": "Handled by Readers exception handler",
+                            "detail": "Error occurred while changing database data"
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Reader not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Readers exception handler",
+                        "detail": "Reader with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def edit_one(
         instance: ReaderUpdate,
@@ -196,9 +623,63 @@ async def edit_one(
     dependencies=[Depends(current_user),],
     status_code=status.HTTP_200_OK,
     response_model=ReaderRead,
-    description="Edit item partially (for librarians only)"
+    description="Edit item partially (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One reader edited",
+                            "value": {
+                                "id": 1,
+                                "name": "Angelina",
+                                "email": "angel@mail.ru",
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database deleting error",
+                        "value": {
+                            "message": "Handled by Readers exception handler",
+                            "detail": "Error occurred while changing database data"
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Reader not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Readers exception handler",
+                        "detail": "Reader with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
-async def edit_one(
+async def edit_one_partial(
         instance: ReaderUpdatePartial,
         orm_model: "Reader" = Depends(deps.get_one),
         session: AsyncSession = Depends(DBConfigurer.session_getter)

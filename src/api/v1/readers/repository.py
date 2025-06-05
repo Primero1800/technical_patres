@@ -1,10 +1,11 @@
 import logging
-from typing import TYPE_CHECKING, Union, Optional
 
+from fastapi import status
 from sqlalchemy import select, Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, with_loader_criteria
+from typing import TYPE_CHECKING, Union, Optional
 
 from src.core.models import Reader, BorrowedBook
 from src.tools.exceptions import CustomException
@@ -54,6 +55,7 @@ class ReaderRepository:
         orm_model = await self.session.get(Reader, id)
         if not orm_model:
             raise CustomException(
+                status_code=status.HTTP_404_NOT_FOUND,
                 msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
@@ -80,6 +82,7 @@ class ReaderRepository:
 
         if not orm_model:
             raise CustomException(
+                status_code=status.HTTP_404_NOT_FOUND,
                 msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
@@ -104,6 +107,7 @@ class ReaderRepository:
 
         if not orm_model:
             raise CustomException(
+                status_code=status.HTTP_404_NOT_FOUND,
                 msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
