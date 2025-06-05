@@ -24,6 +24,20 @@ class Book(IDIntPkMixin, Base):
     author: Mapped[str] = mapped_column(
         String,
     )
+    """Вариант для третьей миграции alembic"""
+    description: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default='Unknown',
+        server_default='Unknown'
+    )
+    """Закомментированный вариант для второй миграции alembic"""
+    # description: Mapped[str] = mapped_column(
+    #     String,
+    #     nullable=True,
+    #     default=None,
+    #     server_default=None
+    # )
     published_at: Mapped[int] = mapped_column(
         Integer,
         nullable=True,

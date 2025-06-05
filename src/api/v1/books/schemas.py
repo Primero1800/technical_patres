@@ -22,6 +22,10 @@ base_quantity_field = Annotated[conint(ge=0), Field(
     title="Book's quantity available"
 )]
 
+base_description_field = Annotated[str, Field(
+    title="Book's description"
+)]
+
 
 class BaseBook(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -33,7 +37,7 @@ class BaseBook(BaseModel):
 
 
 class BookShort(BaseBook):
-    pass
+    description: Optional[base_description_field] = None
 
 
 class BookLibList(BookShort):
