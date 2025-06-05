@@ -30,10 +30,10 @@ async def get_one_complex(
 
 
 async def get_one_complex_actual(
-    user_id: int,
+    id: int,
     session: AsyncSession = Depends(DBConfigurer.session_getter)
 ) -> "Reader":
     service: ReaderService = ReaderService(
         session=session
     )
-    return await service.get_one_complex(id=user_id, actual=True)
+    return await service.get_one_complex(id=id, actual=True)
