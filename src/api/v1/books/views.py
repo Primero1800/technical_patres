@@ -414,6 +414,27 @@ async def get_one_complex(
                 }
             }
         },
+        422: {
+            "description": "Invalid JSON-format or data.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Application Exception Handler",
+                        "detail": [
+                            {
+                                "type": "json_invalid",
+                                "loc": ["body", 46],
+                                "msg": "JSON decode error",
+                                "input": {},
+                                "ctx": {
+                                    "error": "Expecting property name enclosed in double quotes"
+                                }
+                        }
+                        ]
+                    }
+                }
+            }
+        }
     }
 )
 async def create_one(
@@ -551,6 +572,27 @@ async def delete_one(
                     }
                 }
             }
+        },
+        422: {
+            "description": "Invalid JSON-format or data.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Application Exception Handler",
+                        "detail": [
+                            {
+                                "type": "json_invalid",
+                                "loc": ["body", 46],
+                                "msg": "JSON decode error",
+                                "input": {},
+                                "ctx": {
+                                    "error": "Expecting property name enclosed in double quotes"
+                                }
+                        }
+                        ]
+                    }
+                }
+            }
         }
     }
 )
@@ -629,6 +671,27 @@ async def edit_one(
                     "example": {
                         "message": "Handled by Books exception handler",
                         "detail": "Book with id=7 not exists",
+                    }
+                }
+            }
+        },
+        422: {
+            "description": "Invalid JSON-format or data.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Application Exception Handler",
+                        "detail": [
+                            {
+                                "type": "json_invalid",
+                                "loc": ["body", 46],
+                                "msg": "JSON decode error",
+                                "input": {},
+                                "ctx": {
+                                    "error": "Expecting property name enclosed in double quotes"
+                                }
+                        }
+                        ]
                     }
                 }
             }
