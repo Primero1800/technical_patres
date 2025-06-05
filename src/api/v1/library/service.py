@@ -4,7 +4,7 @@ from datetime import datetime
 from fastapi import status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from src.core.settings import settings
 from src.tools.exceptions import CustomException
@@ -63,7 +63,7 @@ class LibraryService:
 
         if book.quantity < 1:
             return ORJSONResponse(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 content={
                     "message": Errors.HANDLER_MESSAGE(),
                     "detail": Errors.NOT_ENOUGH_QUANTITY(),
@@ -71,7 +71,7 @@ class LibraryService:
             )
         if len(reader.borrowed_books) >= settings.reader.READERS_MAX_ITEMS_AT_ONCE:
             return ORJSONResponse(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 content={
                     "message": Errors.HANDLER_MESSAGE(),
                     "detail": Errors.LIMIT_REACHED()
@@ -182,3 +182,11 @@ class LibraryService:
             if isinstance(edition_result, ORJSONResponse):
                 return edition_result
         return result
+
+    async def get_actual_info(
+            self,
+            reader: "Reader"
+    ):
+        if isinstance(reader, ORJSONResponse):
+            return reader
+        return sorted([b_book.book for b_book in reader.borrowed_books], key=lambda x: x.id)
