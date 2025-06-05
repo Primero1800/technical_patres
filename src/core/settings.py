@@ -42,12 +42,6 @@ class Auth(CustomSettings):
     AUTH_PRIVATE_KEY: Path = BASE_DIR / "core" / "certs" / "jwt-private.pem"
     AUTH_PUBLIC_KEY: Path = BASE_DIR / "core" / "certs" / "jwt-public.pem"
 
-    # AUTH_RESET_PASSWORD_TOKEN_SECRET: str
-    # AUTH_VERIFICATION_TOKEN_SECRET: str
-
-    # AUTH_VERIFICATION_TOKEN_LIFETIME_SECONDS: int
-    # AUTH_RESET_PASSWORD_TOKEN_LIFETIME_SECONDS: int
-
     def get_url(self, purpose: str, version: str = "v1"):
         PURPOSE = ''
         SECOND_PARAM = "unversioned"
