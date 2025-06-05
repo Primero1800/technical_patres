@@ -31,6 +31,60 @@ router = APIRouter()
 @router.post(
         "/login",
         name=f"auth:{auth_backend.name}.login",
+        status_code=status.HTTP_200_OK,
+        description="Get jwt-token to authenticate",
+        responses={
+            200: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "Actual access-token to authenticate",
+                                "value": {
+                                    "access_token": "eyJhbGciOiJSUzI1NiIsInR_any_access_token__5ufSvph_yTiOmZlAjzg",
+                                    "token_type": "Bearer",
+                                },
+                            }
+                        }
+                    }
+                }
+            },
+            400: {
+                "description": "Bad credentials",
+                "content": {
+                    "application/json": {
+                        "example": {
+                            "summary": "Provided bad credentials or user is not registered yet",
+                            "value": {
+                                "message": "Handled by Auth exception handler",
+                                "detail": "Bad credentials or user is not active"
+                            }
+                        }
+                    }
+                }
+            },
+            422: {
+                "description": "Validation Error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "invalid input": {
+                                "summary": "Invalid input data",
+                                "value": {
+                                    "message": "Handled by Application Exception Handler",
+                                    "detail": [
+                                        {
+                                            "loc": ["username", "password"],
+                                            "type": "missing"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
 )
 async def login(
     request: Request,
@@ -53,9 +107,52 @@ async def login(
 
 @router.post(
         "/register",
-        response_model=UserRead,
-        status_code=status.HTTP_201_CREATED,
         name="register:register",
+        status_code=status.HTTP_201_CREATED,
+        description="Creating (registration) of new user, no need in verification",
+        response_model=UserRead,
+        responses={
+            201: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "New registered user with unique email",
+                                "value": {
+                                    "id": 1,
+                                    "email": "admin@admin.com",
+                                    "is_active": True,
+                                    "is_verified": False,
+                                    "is_superuser": False,
+                                },
+                            }
+                        }
+                    }
+                }
+            },
+            400: {
+                "description": "Validation Error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "invalid input": {
+                                "summary": "Invalid input data",
+                                "value": {
+                                    "message": "Handled by Application Exception Handler",
+                                    "detail": [
+                                        {
+                                            "loc": ["email", "password"],
+                                            "type": "missing"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
+
 )
 async def register(
     request: Request,
