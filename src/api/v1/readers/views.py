@@ -108,6 +108,27 @@ async def get_one_complex(
     )
 
 
+# 2_2
+@router.get(
+    "/{id}/actual",
+    dependencies=[Depends(current_user), ],
+    status_code=status.HTTP_200_OK,
+    response_model=ReaderExtended,
+    description="Get the item by id with all relations (for librarians only)"
+)
+async def get_one_complex_actual(
+        id: int,
+        session: AsyncSession = Depends(DBConfigurer.session_getter)
+):
+    service: ReaderService = ReaderService(
+        session=session
+    )
+    return await service.get_one_complex(
+        id=id,
+        actual=True,
+    )
+
+
 # 3
 @router.post(
     "",
