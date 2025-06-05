@@ -21,3 +21,10 @@ class Base(DeclarativeBase):
         for column in self.__table__.columns:
             result[column.name] = getattr(self, column.name)
         return result
+
+    def __str__(self):
+        text = f"id={self.id}" if hasattr(self, "id") else ""
+        return f"{self.__class__.__name__}({text})"
+
+    def __repr__(self):
+        return str(self)
