@@ -80,6 +80,7 @@ class ReaderService:
             self,
             id: int,
             actual: bool = False,
+            to_schema: bool = True
     ):
         repository: ReaderRepository = ReaderRepository(
             session=self.session
@@ -97,7 +98,31 @@ class ReaderService:
                     "detail": exc.msg,
                 }
             )
-        return await serialize(model=result)
+        if to_schema:
+            return await serialize(model=result)
+        return result
+
+    async def get_one_full(
+            self,
+            id: int,
+            actual: bool = False,
+    ):
+        repository: ReaderRepository = ReaderRepository(
+            session=self.session
+        )
+        try:
+            return await repository.get_one_full(
+                id=id,
+                actual=actual,
+            )
+        except CustomException as exc:
+            return ORJSONResponse(
+                status_code=exc.status_code,
+                content={
+                    "message": Errors.HANDLER_MESSAGE(),
+                    "detail": exc.msg,
+                }
+            )
 
     async def create_one(
             self,
