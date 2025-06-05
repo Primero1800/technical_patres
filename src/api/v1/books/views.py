@@ -30,7 +30,57 @@ router = APIRouter()
         "",
         response_model=list[BookShort],
         status_code=status.HTTP_200_OK,
-        description="Get the list of the all items"
+        description="Get the list of the all items",
+        responses={
+            200: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "A list of books",
+                                "value": [
+                                    {
+                                        "name": "The Three Musketeers",
+                                        "author": "A.Dumas",
+                                        "published_at": 2000,
+                                        "isbn": "978-3-16-148410-0",
+                                        "description": "Unknown"
+                                    },
+                                    {
+                                        "name": "Gone with the Wind",
+                                        "author": "M.Mitchell",
+                                        "published_at": 1970,
+                                        "isbn": None,
+                                        "description": "Classic literature"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            422: {
+                "description": "Validation Error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "invalid input": {
+                                "summary": "Invalid input data",
+                                "value": {
+                                    "detail": [
+                                        {
+                                            "loc": ["query", "page"],
+                                            "msg": "Input should be greater than 0",
+                                            "type": "greater_than"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
 )
 async def get_all(
         page: int = Query(1, gt=0, description="Result list page number, greater than 0"),
@@ -52,7 +102,106 @@ async def get_all(
         dependencies=[Depends(current_user)],
         response_model=list[BookExtended],
         status_code=status.HTTP_200_OK,
-        description="Get the list of the all items (for librarians only)"
+        description="Get the list of the all items (for librarians only)",
+        responses={
+            200: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "A list of books",
+                                "value": [
+                                    {
+                                        "id": 1,
+                                        "name": "The Three Musketeers",
+                                        "author": "A.Dumas",
+                                        "published_at": 2000,
+                                        "isbn": "978-3-16-148410-0",
+                                        "description": "Unknown",
+                                        "quantity": 1,
+                                        "borrowed_books": [
+                                            {
+                                                "id": 1,
+                                                "book_id": 1,
+                                                "reader_id": 18,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": None
+                                            },
+                                            {
+                                                "id": 21,
+                                                "book_id": 1,
+                                                "reader_id": 24,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": "2022-09-04T17:28:17.170342"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "id": 2,
+                                        "name": "Gone with the Wind",
+                                        "author": "M.Mitchell",
+                                        "published_at": 1970,
+                                        "isbn": None,
+                                        "description": "Classic literature",
+                                        "quantity": 14,
+                                        "borrowed_books": [
+                                            {
+                                                "id": 1,
+                                                "book_id": 1,
+                                                "reader_id": 18,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": None
+                                            },
+                                            {
+                                                "id": 21,
+                                                "book_id": 1,
+                                                "reader_id": 24,
+                                                "borrow_date": "2022-06-04T17:28:17.170342",
+                                                "return_date": "2022-09-04T17:28:17.170342"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            401: {
+                "description": "Unauthorized",
+                "content": {
+                    "text/plain": {
+                        "examples": {
+                            "not authenticated": {
+                                "summary": "User is not authenticated",
+                                "value": "Unauthorized"
+                            }
+                        }
+                    }
+                }
+            },
+            422: {
+                "description": "Validation Error",
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "invalid input": {
+                                "summary": "Invalid input data",
+                                "value": {
+                                    "detail": [
+                                        {
+                                            "loc": ["query", "page"],
+                                            "msg": "Input should be greater than 0",
+                                            "type": "greater_than"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
 )
 async def get_all(
         page: int = Query(1, gt=0, description="Result list page number, greater than 0"),
@@ -70,11 +219,55 @@ async def get_all(
 
 # 2
 @router.get(
-    "/{id}",
-    dependencies=[Depends(current_user), ],
-    status_code=status.HTTP_200_OK,
-    response_model=BookRead,
-    description="Get the item by id (for librarians only)"
+        "/{id}",
+        dependencies=[Depends(current_user), ],
+        status_code=status.HTTP_200_OK,
+        response_model=BookRead,
+        description="Get the item by id (for librarians only)",
+        responses={
+            200: {
+                "content": {
+                    "application/json": {
+                        "examples": {
+                            "example1": {
+                                "summary": "One simple book",
+                                "value": {
+                                    "id": 1,
+                                    "name": "The Three Musketeers",
+                                    "author": "A.Dumas",
+                                    "published_at": 2000,
+                                    "isbn": "978-3-16-148410-0",
+                                    "description": "Unknown",
+                                    "quantity": 14
+                                },
+                            }
+                        }
+                    }
+                }
+            },
+            401: {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "example": {
+                            "summary": "User is not authenticated",
+                            "value": "Unauthorized"
+                        }
+                    }
+                }
+            },
+            404: {
+                "description": "Book not found",
+                "content": {
+                    "application/json": {
+                        "example": {
+                            "message": "Handled by Books exception handler",
+                            "detail": "Book with id=7 not exists",
+                        }
+                    }
+                }
+            }
+        }
 )
 async def get_one(
         id: int,
@@ -94,7 +287,67 @@ async def get_one(
     dependencies=[Depends(current_user), ],
     status_code=status.HTTP_200_OK,
     response_model=BookExtended,
-    description="Get the item by id with all relations (for librarians only)"
+    description="Get the item by id with all relations (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One simple book",
+                            "value": {
+                                "id": 1,
+                                "name": "The Three Musketeers",
+                                "author": "A.Dumas",
+                                "published_at": 2000,
+                                "isbn": "978-3-16-148410-0",
+                                "description": "Unknown",
+                                "quantity": 1,
+                                "borrowed_books": [
+                                    {
+                                        "id": 1,
+                                        "book_id": 1,
+                                        "reader_id": 18,
+                                        "borrow_date": "2022-06-04T17:28:17.170342",
+                                        "return_date": None
+                                    },
+                                    {
+                                        "id": 21,
+                                        "book_id": 1,
+                                        "reader_id": 24,
+                                        "borrow_date": "2022-06-04T17:28:17.170342",
+                                        "return_date": "2022-09-04T17:28:17.170342"
+                                    }
+                                ]
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Book not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Books exception handler",
+                        "detail": "Book with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def get_one_complex(
         id: int,
@@ -114,7 +367,43 @@ async def get_one_complex(
     dependencies=[Depends(current_user),],
     status_code=status.HTTP_201_CREATED,
     response_model=BookRead,
-    description="Create one item (for librarians only)"
+    description="Create one item (for librarians only)",
+    responses={
+        201: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One book created",
+                            "value": {
+                                "id": 1,
+                                "name": "The Three Musketeers",
+                                "author": "A.Dumas",
+                                "published_at": 2000,
+                                "isbn": "978-3-16-148410-0",
+                                "description": "Unknown",
+                                "quantity": 14
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database insertion error",
+                        "value": {
+                            "message": "Handled by Books exception handler",
+                            "detail": "Book already exists"
+                        }
+                    }
+                }
+            }
+        },
+    }
 )
 async def create_one(
         instance: BookCreate,
@@ -134,7 +423,38 @@ async def create_one(
     "/{id}",
     dependencies=[Depends(current_user), ],
     status_code=status.HTTP_204_NO_CONTENT,
-    description="Delete one item by id (for librarians only)"
+    description="Delete one item by id (for librarians only)",
+    responses={
+        204: {
+            "description": "Book was deleted",
+            "content": "No content"
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database deleting error",
+                        "value": {
+                            "message": "Handled by Books exception handler",
+                            "detail": "Error occurred while changing database data"
+                        }
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Book not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Books exception handler",
+                        "detail": "Book with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def delete_one(
         orm_model: "Book" = Depends(deps.get_one),
@@ -152,7 +472,65 @@ async def delete_one(
     dependencies=[Depends(current_user),],
     status_code=status.HTTP_200_OK,
     response_model=BookRead,
-    description="Edit one item (for librarians only)"
+    description="Edit one item (for librarians only)",
+    responses= {
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One simple book",
+                            "value": {
+                                "id": 1,
+                                "name": "The Three Musketeers",
+                                "author": "A.Dumas",
+                                "published_at": 2000,
+                                "isbn": "978-3-16-148410-0",
+                                "description": "Unknown",
+                                "quantity": 14
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database deleting error",
+                        "value": {
+                            "message": "Handled by Books exception handler",
+                            "detail": "Error occurred while changing database data"
+                        }
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Book not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Books exception handler",
+                        "detail": "Book with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
 async def edit_one(
         instance: BookUpdate,
@@ -175,9 +553,67 @@ async def edit_one(
     dependencies=[Depends(current_user),],
     status_code=status.HTTP_200_OK,
     response_model=BookRead,
-    description="Edit item partially (for librarians only)"
+    description="Edit item partially (for librarians only)",
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "example1": {
+                            "summary": "One simple book",
+                            "value": {
+                                "id": 1,
+                                "name": "The Three Musketeers",
+                                "author": "A.Dumas",
+                                "published_at": 2000,
+                                "isbn": "978-3-16-148410-0",
+                                "description": "Unknown",
+                                "quantity": 14
+                            },
+                        }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "Database deleting error",
+                        "value": {
+                            "message": "Handled by Books exception handler",
+                            "detail": "Error occurred while changing database data"
+                        }
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Book not found",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "message": "Handled by Books exception handler",
+                        "detail": "Book with id=7 not exists",
+                    }
+                }
+            }
+        }
+    }
 )
-async def edit_one(
+async def edit_one_partial(
         instance: BookUpdatePartial,
         orm_model: "Book" = Depends(deps.get_one),
         session: AsyncSession = Depends(DBConfigurer.session_getter)

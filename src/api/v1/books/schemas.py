@@ -45,7 +45,6 @@ class BookLibList(BookShort):
 
 
 class BookRead(BookShort):
-    id: int
     quantity: base_quantity_field
 
 

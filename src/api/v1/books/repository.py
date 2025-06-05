@@ -1,4 +1,6 @@
 import logging
+
+from fastapi import status
 from typing import TYPE_CHECKING, Union, Optional
 
 from sqlalchemy import select, Result
@@ -54,6 +56,7 @@ class BookRepository:
         orm_model = await self.session.get(Book, id)
         if not orm_model:
             raise CustomException(
+                status_code=status.HTTP_404_NOT_FOUND,
                 msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
@@ -71,6 +74,7 @@ class BookRepository:
 
         if not orm_model:
             raise CustomException(
+                status_code=status.HTTP_404_NOT_FOUND,
                 msg=Errors.NOT_EXISTS_ID(id)
             )
         return orm_model
