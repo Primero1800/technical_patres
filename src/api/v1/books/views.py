@@ -403,6 +403,17 @@ async def get_one_complex(
                 }
             }
         },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
+                    }
+                }
+            }
+        },
     }
 )
 async def create_one(
@@ -439,6 +450,17 @@ async def create_one(
                             "message": "Handled by Books exception handler",
                             "detail": "Error occurred while changing database data"
                         }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
                     }
                 }
             }
@@ -494,17 +516,6 @@ async def delete_one(
                 }
             }
         },
-        401: {
-            "description": "Unauthorized",
-            "content": {
-                "application/json": {
-                    "example": {
-                        "summary": "User is not authenticated",
-                        "value": "Unauthorized"
-                    }
-                }
-            }
-        },
         400: {
             "description": "Bad Request",
             "content": {
@@ -515,6 +526,17 @@ async def delete_one(
                             "message": "Handled by Books exception handler",
                             "detail": "Error occurred while changing database data"
                         }
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "summary": "User is not authenticated",
+                        "value": "Unauthorized"
                     }
                 }
             }
