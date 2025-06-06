@@ -103,6 +103,7 @@ class BookService:
         is_valid_published_at_or_exc = await Validator.validate_published_at(
             instance.published_at
         )
+        #  Вернет ответ с ошибкой ORJSONResponse, если указанный год публикации будет больше текущего
         if isinstance(is_valid_published_at_or_exc, ORJSONResponse):
             return is_valid_published_at_or_exc
 
@@ -126,6 +127,7 @@ class BookService:
             self,
             orm_model: "Book",
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет записей в бд по выбранному id
         if orm_model and isinstance(orm_model, ORJSONResponse):
             return orm_model
 
@@ -149,12 +151,14 @@ class BookService:
             instance: BookUpdate | BookUpdatePartial,
             is_partial: bool = False
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет записей в бд по выбранному id
         if orm_model and isinstance(orm_model, ORJSONResponse):
             return orm_model
 
         is_valid_published_at_or_exc = await Validator.validate_published_at(
             instance.published_at
         )
+        #  Вернет ответ с ошибкой ORJSONResponse, если указанный год публикации будет больше текущего
         if isinstance(is_valid_published_at_or_exc, ORJSONResponse):
             return is_valid_published_at_or_exc
 

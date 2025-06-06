@@ -56,11 +56,13 @@ class LibraryService:
             book: "Book",
             reader: "Reader"
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет записей в бд по выбранным reader_id и book_id
         if isinstance(book, ORJSONResponse):
             return book
         if isinstance(reader, ORJSONResponse):
             return reader
 
+        #  Вернет ответ с ошибкой ORJSONResponse, если количество выбранной позиции < 1
         if book.quantity < 1:
             return ORJSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -69,6 +71,9 @@ class LibraryService:
                     "detail": Errors.NOT_ENOUGH_QUANTITY(),
                 }
             )
+
+        #  Вернет ответ с ошибкой ORJSONResponse, если превышен лимит на количество книг "на руках"
+        # В borrowed_books по выборке попадают только "актуальные" (невозвращенные) книги читателя
         if len(reader.borrowed_books) >= settings.reader.READERS_MAX_ITEMS_AT_ONCE:
             return ORJSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -78,6 +83,8 @@ class LibraryService:
                 }
             )
 
+        #  Вернет ответ с ошибкой ORJSONResponse, если у читателя уже есть такая книга "на руках"
+        # В borrowed_books по выборке попадают только "актуальные" (невозвращенные) книги читателя
         reader_books = [book.book_id for book in reader.borrowed_books]
         if book.id in reader_books:
             return ORJSONResponse(
@@ -113,6 +120,8 @@ class LibraryService:
                 }
             )
 
+        #  В случае успешного создания экземпляра "выдачи" BorrowedBook уменьшаем количество
+        # экземпляров текущей книги на складе на 1
         if result:
             book_service: BookService = BookService(
                 session=self.session
@@ -130,9 +139,11 @@ class LibraryService:
             self,
             orm_model: "BorrowedBook"
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет записей в бд по выбранному  borrowed_id
         if isinstance(orm_model, ORJSONResponse):
             return orm_model
 
+        #  Вернет ответ с ошибкой ORJSONResponse, если книга уже возвращена
         if orm_model.return_date is not None:
             return ORJSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -141,6 +152,8 @@ class LibraryService:
                     "detail": Errors.INVALID_OPERATION(),
                 }
             )
+
+        #  Фиксируем в бд дату и время возврата книги
         repository: LibraryRepository = LibraryRepository(
             session=self.session
         )
@@ -155,6 +168,9 @@ class LibraryService:
                     "detail": exc.msg,
                 }
             )
+
+        # В случае успешного добавления времени возрата книги в бд увеличиваем количество экземпляров
+        # возвращенной книги на 1
         if result:
             book_service: BookService = BookService(
                 session=self.session
@@ -187,6 +203,8 @@ class LibraryService:
             self,
             reader: "Reader"
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет читателя в бд по выбранному  id
         if isinstance(reader, ORJSONResponse):
             return reader
+
         return sorted([b_book.book for b_book in reader.borrowed_books], key=lambda x: x.id)

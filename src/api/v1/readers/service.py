@@ -148,6 +148,7 @@ class ReaderService:
             self,
             orm_model: "Reader",
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет записей в бд по выбранному id
         if orm_model and isinstance(orm_model, ORJSONResponse):
             return orm_model
 
@@ -171,6 +172,7 @@ class ReaderService:
             instance: ReaderUpdate | ReaderUpdatePartial,
             is_partial: bool = False
     ):
+        #  Вернет ответ с ошибкой ORJSONResponse, если нет записей в бд по выбранному id
         if orm_model and isinstance(orm_model, ORJSONResponse):
             return orm_model
 
