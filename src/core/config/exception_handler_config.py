@@ -5,9 +5,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import ORJSONResponse
 from pydantic import ValidationError
-from sqlalchemy.exc import IntegrityError, DatabaseError
-
-from src.tools.exceptions import CustomException
 
 
 logger = logging.getLogger(__name__)

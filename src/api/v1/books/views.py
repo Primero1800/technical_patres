@@ -429,7 +429,7 @@ async def get_one_complex(
                                 "ctx": {
                                     "error": "Expecting property name enclosed in double quotes"
                                 }
-                        }
+                            }
                         ]
                     }
                 }
@@ -516,7 +516,7 @@ async def delete_one(
     status_code=status.HTTP_200_OK,
     response_model=BookRead,
     description="Edit one item (for librarians only)",
-    responses= {
+    responses={
         200: {
             "content": {
                 "application/json": {
@@ -588,7 +588,7 @@ async def delete_one(
                                 "ctx": {
                                     "error": "Expecting property name enclosed in double quotes"
                                 }
-                        }
+                            }
                         ]
                     }
                 }
@@ -690,7 +690,7 @@ async def edit_one(
                                 "ctx": {
                                     "error": "Expecting property name enclosed in double quotes"
                                 }
-                        }
+                            }
                         ]
                     }
                 }

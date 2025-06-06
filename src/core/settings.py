@@ -99,7 +99,7 @@ class RunConfig(CustomSettings):
 
 
 class Reader(CustomSettings):
-    READERS_MAX_ITEMS_AT_ONCE: int =3
+    READERS_MAX_ITEMS_AT_ONCE: int = 3
 
 
 class Tags(CustomSettings):

@@ -481,7 +481,7 @@ async def get_one_complex_actual(
                                 "ctx": {
                                     "error": "Expecting property name enclosed in double quotes"
                                 }
-                        }
+                            }
                         ]
                     }
                 }
@@ -636,7 +636,7 @@ async def delete_one(
                                 "ctx": {
                                     "error": "Expecting property name enclosed in double quotes"
                                 }
-                        }
+                            }
                         ]
                     }
                 }
@@ -734,7 +734,7 @@ async def edit_one(
                                 "ctx": {
                                     "error": "Expecting property name enclosed in double quotes"
                                 }
-                        }
+                            }
                         ]
                     }
                 }
