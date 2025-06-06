@@ -13,11 +13,9 @@ services:
     depends_on:
       - db
     volumes:
-      - ./alembic:/app/alembic
-      - ./src:/app/src
-      - ./static:/app/static
-      - ./alembic.ini:/app/alembic.ini
+      - ./tests:/app/tests
     command: [ "sh", "-c", "poetry run alembic upgrade head &&
+                                              PYTHONPATH=/app poetry run pytest tests &&
                                               poetry run uvicorn src.main:app --host 0.0.0.0 --reload" ]
 
   db:
