@@ -1,14 +1,10 @@
 import logging
 from typing import TYPE_CHECKING
 
-from sqlalchemy import select, Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
 
 from src.core.models import (
-    Book,
-    Reader,
     BorrowedBook,
 )
 from src.tools.exceptions import CustomException
