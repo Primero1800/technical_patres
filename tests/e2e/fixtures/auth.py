@@ -3,10 +3,11 @@ import json
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 
+from src.core.settings import settings
 from src.main import app
 
-TEST_USER = "test_user@test.com"
-TEST_PASSWORD = "12345678"
+TEST_USER = settings.users.USERS_TEST_USER_EMAIL
+TEST_PASSWORD = settings.users.USERS_TEST_USER_PASSWORD
 
 
 @pytest_asyncio.fixture(loop_scope='session')

@@ -122,6 +122,8 @@ class Tags(CustomSettings):
 
 class Users(CustomSettings):
     USERS_PASSWORD_MIN_LENGTH: int
+    USERS_TEST_USER_EMAIL: str
+    USERS_TEST_USER_PASSWORD: str
 
 
 class Settings(CustomSettings):
